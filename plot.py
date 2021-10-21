@@ -6,7 +6,9 @@ from matplotlib import pyplot as plt
 dataset_names = ["abalone", "bank", "balloons", "car", "credit",
                  "ecoli", "flags", "glass", "letter", "iris"]
 ACC = pickle.loads(open('results.pickle', "rb").read())
-ACC = np.sum(ACC, axis=-1) / 4
+train_acc = pickle.loads(open('train_acc.pickle', "rb").read())
+test_acc = pickle.loads(open('test_acc.pickle', "rb").read())
+ACC = np.mean(ACC, axis=-1)
 
 plt.figure(figsize=(9, 9))
 plt.style.use("ggplot")

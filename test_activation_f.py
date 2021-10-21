@@ -1,14 +1,12 @@
 import os
 
 import numpy as np
-import random
 import pickle
 from function import RVFL_train_val
 import h5py
 from option import option as op
 
-
-dataset_names = ["abalone", "car", "ecoli", "flags", "glass", "letter", "iris", "magic", "nursery", "seeds"]
+dataset_names = ["abalone", "car", "ringnorm", "ecoli", "miniboone", "semeion", "iris", "magic", "ozone", "zoo"]
 num_dataset = len(dataset_names)
 
 # # Look at the documentation of RVFL_train_val function file
@@ -60,7 +58,8 @@ for i, dataset_name in enumerate(dataset_names):
             for C in range(-5, 15):
                 Scale = np.power(2, S[s])
 
-                # with direct links from the input layer to the output layer
+                # using activation function relu
+                option3[i].ActivationFunction = 'relu'
                 option1[i].N = N
                 option1[i].C = 2 ** C
                 option1[i].Scale = Scale
@@ -68,16 +67,17 @@ for i, dataset_name in enumerate(dataset_names):
                 option1[i].bias = 1
                 option1[i].link = 1
 
-                # without direct links from the input layer to the output layer
+                # using activation function sigmoid
+                option3[i].ActivationFunction = 'sigmoid'
                 option2[i].N = N
                 option2[i].C = 2 ** C
                 option2[i].Scale = Scale
                 option2[i].Scalemode = 3
                 option2[i].bias = 1
-                option2[i].link = 0
+                option2[i].link = 1
 
-                # using activation function sigmoid
-                option3[i].ActivationFunction = 'sigmoid'
+                # using activation function radbas
+                option3[i].ActivationFunction = 'radbas'
                 option3[i].N = N
                 option3[i].C = 2 ** C
                 option3[i].Scale = Scale
@@ -85,8 +85,8 @@ for i, dataset_name in enumerate(dataset_names):
                 option3[i].bias = 1
                 option3[i].link = 1
 
-                # using activation function hardlim
-                option4[i].ActivationFunction = 'hardlim'
+                # using activation function sine
+                option4[i].ActivationFunction = 'sine'
                 option4[i].N = N
                 option4[i].C = 2 ** C
                 option4[i].Scale = Scale
@@ -94,8 +94,8 @@ for i, dataset_name in enumerate(dataset_names):
                 option4[i].bias = 1
                 option4[i].link = 1
 
-                # using Moore-Penrose pseudoinverse
-                option5[i].mode = 2
+                # using activation function hardlim
+                option3[i].ActivationFunction = 'hardlim'
                 option5[i].N = N
                 option5[i].C = 2 ** C
                 option5[i].Scale = Scale
@@ -103,8 +103,8 @@ for i, dataset_name in enumerate(dataset_names):
                 option5[i].bias = 1
                 option5[i].link = 1
 
-                # using ridge regression (or regularized least square solutions)
-                option6[i].mode = 1
+                # using activation function tribas
+                option3[i].ActivationFunction = 'tribas'
                 option6[i].N = N
                 option6[i].C = 2 ** C
                 option6[i].Scale = Scale
@@ -156,13 +156,13 @@ for i, dataset_name in enumerate(dataset_names):
                     Best_N[3] = N
                     Best_C[3] = C
                     Best_S[3] = Scale
-                    
+
                 if test_accuracy4 > MAX_acc[4]:
                     MAX_acc[4] = test_accuracy5
                     Best_N[4] = N
                     Best_C[4] = C
                     Best_S[4] = Scale
-                    
+
                 if test_accuracy4 > MAX_acc[5]:
                     MAX_acc[5] = test_accuracy6
                     Best_N[5] = N
@@ -189,7 +189,8 @@ for i, dataset_name in enumerate(dataset_names):
         option1[i].Scale = Best_S[0, 0]
         option1[i].Scalemode = 3
         option1[i].bias = 1
-        option1[i].link = 0
+        option1[i].link = 1
+        option3[i].ActivationFunction = 'relu'
 
         option2[i].N = Best_N[1, 0]
         option2[i].C = 2 ** Best_C[1, 0]
@@ -197,6 +198,7 @@ for i, dataset_name in enumerate(dataset_names):
         option2[i].Scalemode = 3
         option2[i].bias = 1
         option2[i].link = 1
+        option3[i].ActivationFunction = 'sigmoid'
 
         option3[i].N = Best_N[2, 0]
         option3[i].C = 2 ** Best_C[2, 0]
@@ -204,7 +206,7 @@ for i, dataset_name in enumerate(dataset_names):
         option3[i].Scalemode = 3
         option3[i].bias = 1
         option3[i].link = 1
-        option3[i].ActivationFunction = 'sigmoid'
+        option3[i].ActivationFunction = 'radbas'
 
         option4[i].N = Best_N[3, 0]
         option4[i].C = 2 ** Best_C[3, 0]
@@ -212,7 +214,7 @@ for i, dataset_name in enumerate(dataset_names):
         option4[i].Scalemode = 3
         option4[i].bias = 1
         option4[i].link = 1
-        option4[i].ActivationFunction = 'hardlim'
+        option4[i].ActivationFunction = 'sine'
 
         option5[i].N = Best_N[4, 0]
         option5[i].C = 2 ** Best_C[4, 0]
@@ -220,7 +222,7 @@ for i, dataset_name in enumerate(dataset_names):
         option5[i].Scalemode = 3
         option5[i].bias = 1
         option5[i].link = 1
-        option5[i].mode = 2
+        option3[i].ActivationFunction = 'hardlim'
 
         option6[i].N = Best_N[5, 0]
         option6[i].C = 2 ** Best_C[5, 0]
@@ -228,7 +230,7 @@ for i, dataset_name in enumerate(dataset_names):
         option6[i].Scalemode = 3
         option6[i].bias = 1
         option6[i].link = 1
-        option6[i].mode = 1
+        option3[i].ActivationFunction = 'tribas'
 
         train_accuracy1, ACC_CV[i, 0, j] = RVFL_train_val(trainX, trainY, testX, testY, option1[i])
         train_accuracy2, ACC_CV[i, 1, j] = RVFL_train_val(trainX, trainY, testX, testY, option2[i])
@@ -238,17 +240,16 @@ for i, dataset_name in enumerate(dataset_names):
         train_accuracy6, ACC_CV[i, 5, j] = RVFL_train_val(trainX, trainY, testX, testY, option6[i])
 
 print("[INFO] saving ACC...")
-f = open('results.pickle', "wb")
+f = open('activation_acc.pickle', "wb")
 f.write(pickle.dumps(ACC_CV))
 f.close()
 
 print("[INFO] saving train_acc...")
-f = open('train_acc.pickle', "wb")
+f = open('activation_train_acc.pickle', "wb")
 f.write(pickle.dumps(train_acc))
 f.close()
 
 print("[INFO] saving test_acc...")
-f = open('test_acc.pickle', "wb")
+f = open('activation_test_acc.pickle', "wb")
 f.write(pickle.dumps(test_acc))
 f.close()
-# print(np.mean(ACC_CV, axis=0))
