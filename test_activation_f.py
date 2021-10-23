@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import pickle
-from function import RVFL_train_val
+from function_new import RVFL_train_val
 import h5py
 from option import option as op
 
