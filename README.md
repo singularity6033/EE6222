@@ -1,1 +1,2 @@
-This is the code of EE6222's continuous assignment
+# EE6222
+Fundamentals of image processing & analysis. Feature Extraction Techniques. Pattern / Object Recognition and Interpretation. Three Dimensional Computer Vision. Three-Dimensional Recognition Techniques. Biometrics.
