@@ -13,7 +13,7 @@ num_dataset = len(dataset_names)
 option1 = [op()] * num_dataset
 option2 = [op()] * num_dataset
 
-epochs = len(range(0, np.linspace(-5, 5, 21).size)) * len(range(3, 204, 20)) * len(range(-5, 15))
+epochs = len(range(0, np.linspace(-5, 5, 21).size)) * len(range(3, 204, 20))
 train_acc = np.zeros((10, 2, epochs))
 test_acc = np.zeros((10, 2, epochs))
 ACC_CV = np.zeros([num_dataset, 2, 4])
@@ -49,50 +49,49 @@ for i, dataset_name in enumerate(dataset_names):
     Best_S = np.zeros([2, 1])
     S = np.linspace(-5, 5, 21)
     count = 0
-    for s in range(0, S.size):
-        for N in range(3, 204, 20):
-            for C in range(-5, 15):
-                Scale = np.power(2, S[s])
+    for N in range(3, 204, 20):
+        for C in range(-5, 15):
+            Scale = 1
 
-                # using Moore-Penrose pseudoinverse
-                option1[i].mode = 2
-                option1[i].N = N
-                option1[i].C = 2 ** C
-                option1[i].Scale = Scale
-                option1[i].Scalemode = 3
-                option1[i].bias = 1
-                option1[i].link = 1
+            # using Moore-Penrose pseudoinverse
+            option1[i].mode = 2
+            option1[i].N = N
+            option1[i].C = 2 ** C
+            option1[i].Scale = Scale
+            option1[i].Scalemode = 3
+            option1[i].bias = 1
+            option1[i].link = 1
 
-                # using ridge regression (or regularized least square solutions)
-                option1[i].mode = 1
-                option2[i].N = N
-                option2[i].C = 2 ** C
-                option2[i].Scale = Scale
-                option2[i].Scalemode = 3
-                option2[i].bias = 1
-                option2[i].link = 1
+            # using ridge regression (or regularized least square solutions)
+            option2[i].mode = 1
+            option2[i].N = N
+            option2[i].C = 2 ** C
+            option2[i].Scale = Scale
+            option2[i].Scalemode = 3
+            option2[i].bias = 1
+            option2[i].link = 1
 
-                train_accuracy1, test_accuracy1 = RVFL_train_val(trainX, trainY, testX, testY, option1[i])
-                train_accuracy2, test_accuracy2 = RVFL_train_val(trainX, trainY, testX, testY, option2[i])
+            train_accuracy1, test_accuracy1 = RVFL_train_val(trainX, trainY, testX, testY, option1[i])
+            train_accuracy2, test_accuracy2 = RVFL_train_val(trainX, trainY, testX, testY, option2[i])
 
-                train_acc[i, 0, count] = train_accuracy1
-                train_acc[i, 1, count] = train_accuracy2
-                test_acc[i, 0, count] = train_accuracy1
-                test_acc[i, 1, count] = train_accuracy2
+            train_acc[i, 0, count] = train_accuracy1
+            train_acc[i, 1, count] = train_accuracy2
+            test_acc[i, 0, count] = train_accuracy1
+            test_acc[i, 1, count] = train_accuracy2
 
-                count += 1
-                # parameter tuning: we prefer the parameter which lead to better accuracy on the test data
-                if test_accuracy1 > MAX_acc[0]:
-                    MAX_acc[0] = test_accuracy1
-                    Best_N[0] = N
-                    Best_C[0] = C
-                    Best_S[0] = Scale
+            count += 1
+            # parameter tuning: we prefer the parameter which lead to better accuracy on the test data
+            if test_accuracy1 > MAX_acc[0]:
+                MAX_acc[0] = test_accuracy1
+                Best_N[0] = N
+                Best_C[0] = C
+                Best_S[0] = Scale
 
-                if test_accuracy2 > MAX_acc[1]:
-                    MAX_acc[1] = test_accuracy2
-                    Best_N[1] = N
-                    Best_C[1] = C
-                    Best_S[1] = Scale
+            if test_accuracy2 > MAX_acc[1]:
+                MAX_acc[1] = test_accuracy2
+                Best_N[1] = N
+                Best_C[1] = C
+                Best_S[1] = Scale
 
     temp = h5py.File(os.path.sep.join(["UCI data python", dataset_name + "_conxuntos_kfold.mat"]))
     index = []
